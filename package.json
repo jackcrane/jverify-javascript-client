@@ -1,6 +1,6 @@
 {
   "name": "@jverify/jverify-js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A JavaScript library for the JVerify phone number verification APIs",
   "main": "jverify.js",
   "scripts": {
@@ -22,5 +22,5 @@
   "bugs": {
     "url": "https://github.com/jackcrane/jverify-javascript-client/issues"
   },
-  "homepage": "https://github.com/jackcrane/jverify-javascript-client#readme"
+  "homepage": "https://jverify.us"
 }
