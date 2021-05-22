@@ -17,7 +17,7 @@ npm i jverify-js requests
 In your node.js file, enter the following code:
 
 ```javascript
-const JVerify_lib = require('./javascript.js');
+const JVerify_lib = require('jverify-js');
 
 const JVerify = new JVerify_lib({
   token:'T3h5N3RyUPNT4NkQ73cuUtdh_cpNsXHG...', // Get a token from the JVerify dashboard (jverify.us/dashboard)
