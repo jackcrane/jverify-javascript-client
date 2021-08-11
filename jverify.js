@@ -1,10 +1,48 @@
 const request = require('request');
 const fs = require('fs')
 
-module.exports = function(o) {
+module.exports = function (o) {
   let token = o.token;
   let vendor = o.vendor;
+  let tokenConfirmed = false;
+  this.setToken = (e) => {
+    this.token = e;
+    tokenConfirmed = false;
+  }
+  this.setVendor = (e) => {
+    this.vendor = e
+  }
+  this.checkToken = async () => {
+    let res = await (function () {
+      return new Promise(function (resolve, reject) {
+        let options = {
+          'method': 'POST',
+          'url': 'https://jverify.us/verify-token',
+          'headers': {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            key: token
+          })
+        };
+        request(options, function (error, response) {
+          if (!error && response.statusCode == 200) {
+            tokenConfirmed = true;
+            resolve();
+          } else {
+            if (response.statusCode == 403) {
+              tokenConfirmed = false;
+              reject({
+                message: "JVerify did not recognize your token. Please try a different token or check your JVerify dashboard"
+              })
+            } else throw new Error(error)
+          }
+        });
+      })
+    })();
+  }
   this.start = async (o) => {
+    o.number = parseInt(o.number)
     let res = await (function () {
       return new Promise(function (resolve, reject) {
         let options = {
@@ -14,14 +52,14 @@ module.exports = function(o) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            key:token,
-            name:o.name,
-            vendor:vendor,
-            to:o.number
+            key: token,
+            name: o.name,
+            vendor: vendor,
+            to: o.number
           })
         };
         request(options, function (error, response) {
-          if(!error) {
+          if (!error) {
             resolve(response);
           } else {
             reject(error);
@@ -70,9 +108,15 @@ module.exports = function(o) {
         message = 'Something went really wrong and we can\'t even identify what went wrong'
         status = 'Generic Error'
     }
-    return {code:res.statusCode, message:message, status:status, body:JSON.parse(btr)}
+    return {
+      code: res.statusCode,
+      message: message,
+      status: status,
+      body: JSON.parse(btr)
+    }
   }
   this.verify = async (o) => {
+    o.pin = parseInt(o.pin)
     let res = await (function () {
       return new Promise(function (resolve, reject) {
         let options = {
@@ -82,13 +126,13 @@ module.exports = function(o) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            "key":token,
-            "hash":o.hash,
-            "pin":o.pin
+            "key": token,
+            "hash": o.hash,
+            "pin": o.pin
           })
         };
         request(options, function (error, response) {
-          if(!error) {
+          if (!error) {
             resolve(response);
           } else {
             reject(error);
@@ -116,9 +160,19 @@ module.exports = function(o) {
         status = 'Generic Error'
     }
     return {
-      code:res.statusCode,
-      message:message,
-      status:status,
-      body:JSON.parse(btr)}
+      code: res.statusCode,
+      message: message,
+      status: status,
+      body: JSON.parse(btr)
+    }
+  }
+  this.getToken = () => {
+    return (token)
+  }
+  this.getVendor = () => {
+    return (vendor)
+  }
+  this.getTokenConfirmed = () => {
+    return (tokenConfirmed)
   }
 }
